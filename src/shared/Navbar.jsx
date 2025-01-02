@@ -1,7 +1,10 @@
+import { useContext } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../provider/AuthProvider";
 
 
 export default function Navbar() {
+  const { user, userLogOut } = useContext(AuthContext);
   return (
     <div className="navbar bg-black fixed z-10 bg-opacity-30 *:text-white">
   <div className="navbar-start">
@@ -25,7 +28,7 @@ export default function Navbar() {
         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
         <li><Link to='/'>Home</Link></li>
         <li><Link to='/menu'>Our Menu</Link></li>
-        <li><Link to='/shop'>Our Shop</Link></li>
+        <li><Link to='/shop/salad'>Our Shop</Link></li>
         <li><Link to='/contact'>Contact Us</Link></li>
         <li><a>Item 3</a></li>
       </ul>
@@ -36,13 +39,34 @@ export default function Navbar() {
     <ul className="menu menu-horizontal px-1">
     <li><Link to='/'>Home</Link></li>
     <li><Link to='/menu'>Our Menu</Link></li>
-    <li><Link to='/shop'>Our Shop</Link></li>
+    <li><Link to='/shop/salad'>Our Shop</Link></li>
     <li><Link to='/contact'>Contact Us</Link></li>
       <li><a>Item 3</a></li>
     </ul>
   </div>
   <div className="navbar-end">
-    <a className="btn">Button</a>
+    {user ? (
+          <div className="flex items-center gap-4 relative group">
+           <img
+              className="w-10 rounded-full group-hover:ring-4 group-hover:ring-[#7D0DC3] transition-all"
+              src={user?.photoURL}
+              alt="User"
+            />
+            <button
+              onClick={userLogOut}
+              className="px-4 py-3 bg-[#7D0DC3] text-white text-sm rounded-md"
+            >
+              Log Out
+            </button>
+            <div className="hidden md:flex absolute top-12 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black text-white w-28 px-3 py-3 rounded-md text-base z-10">
+              <p className="text-center">{user?.displayName}</p>
+            </div>
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <Link to='/login' className="btn">Login</Link>
+          </div>
+        )}
   </div>
 </div>
   )
