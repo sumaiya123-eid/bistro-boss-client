@@ -9,6 +9,8 @@ import Shop from "../Pages/Shop/Shop";
 import Contact from "../Pages/Contact/Contact";
 import Login from "../Pages/Login";
 import Register from "../Pages/Register";
+import Dashboard from "../Pages/Dashboard/Dashboard";
+import Cart from "../Pages/Dashboard/Cart";
 
 export const router = createBrowserRouter([
     {
@@ -40,5 +42,15 @@ export const router = createBrowserRouter([
           element:<Register></Register>,
         },
       ],
+    },
+    {
+      path:'dashboard',
+      element:<Dashboard></Dashboard>,
+      children:[
+        {
+          path:'/dashboard/cart',
+          element:<Cart></Cart>
+        },
+      ]
     },
   ]);
