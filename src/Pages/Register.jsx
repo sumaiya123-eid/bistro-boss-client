@@ -4,32 +4,71 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useContext, useState } from 'react';
 import { AuthContext } from '../provider/AuthProvider';
 import toast, { Toaster } from 'react-hot-toast';
+import { FaGoogle } from 'react-icons/fa';
+import useAxiosPublic from '../hooks/useAxiosPublic';
+import Swal from 'sweetalert2';
 
 export default function Register() {
+  const axiosPublic=useAxiosPublic()
     const navigate=useNavigate()
     const location=useLocation();
     const from=location.state||'/';
-    const { userRegister, setUser } = useContext(AuthContext);
+    const { userRegister, userUpdate,googleLogin } = useContext(AuthContext);
   const [error, setError] = useState("");
   const handleRegister = (e) => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
     const name = e.target.name.value;
-
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
-
+    const photo = e.target.photo.value;
+  
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$/;
+  
     if (!passwordRegex.test(password)) {
-      setError("Length must be at least 6 characters with an uppercase and lowercase letter.");
+      setError("Password must include at least one uppercase letter, one lowercase letter, one digit, and one special character, with a minimum length of 6.");
       return;
     }
-    setError('');
+    setError("");
+  
     userRegister(email, password)
       .then((result) => {
-        console.log(result.user);
-        setUser(result.user);
-        e.target.reset();
-        navigate(from);
+        return userUpdate(name, photo);
+      })
+      .then(() => {
+        const user = { name, email };
+        return axiosPublic.post('/users', user);
+      })
+      .then((res) => {
+        if (res.data.insertedId) {
+          Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: `${name} has been successfully registered!`,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          navigate(from);
+        }
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
+  };
+  
+
+  const handleGoogle = () => {
+    googleLogin()
+      .then((result) => {
+        console.log("Google login successful", result.user);
+        const userInfo = {
+          email: result.user?.email,
+          name: result.user?.displayName
+      }
+      axiosPublic.post('/users', userInfo)
+      .then(res =>{
+          console.log(res.data);
+          navigate('/');
+      })
       })
       .catch((error) => {
         toast.error(error.message);
@@ -52,6 +91,12 @@ export default function Register() {
         </div>
         <div className="form-control">
           <label className="label">
+            <span className="label-text">Photo</span>
+          </label>
+          <input type="text" name="photo" placeholder="photo" className="input input-bordered" required />
+        </div>
+        <div className="form-control">
+          <label className="label">
             <span className="label-text">Email</span>
           </label>
           <input type="email" name="email" placeholder="email" className="input input-bordered" required />
@@ -69,6 +114,9 @@ export default function Register() {
         </div>
         <div className="form-control mt-6">
           <button className="btn bg-[#D1A054B3] text-white">Sign Up</button>
+          <button type="button" onClick={handleGoogle} className="btn btn-outline w-full py-2 flex items-center justify-center">
+            <FaGoogle className="mr-2" /> Sign in with Google
+          </button>
         </div>
         <p className='text-[#D1A054B3] text-center'>Already registered?<Link to='/login'><span className='font-bold'>Go to log in</span></Link> </p>
       </form>

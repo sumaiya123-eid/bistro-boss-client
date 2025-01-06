@@ -5,6 +5,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../provider/AuthProvider';
 import { loadCaptchaEnginge, LoadCanvasTemplate, LoadCanvasTemplateNoReload, validateCaptcha } from 'react-simple-captcha';
+import { FaGoogle } from 'react-icons/fa';
+import useAxiosPublic from '../hooks/useAxiosPublic';
 
 export default function Login() {
     const [disabled,setDisabled]=useState(true)
@@ -21,10 +23,11 @@ export default function Login() {
             setDisabled(true)
         }
     }
+    const axiosPublic=useAxiosPublic()
     const location=useLocation();
     const from=location.state||'/';
     const navigate=useNavigate();
-    const {userLogin}=useContext(AuthContext)
+    const {userLogin,googleLogin}=useContext(AuthContext)
     const handleLogin=e=>{
         e.preventDefault();
         const email=e.target.email.value;
@@ -40,6 +43,25 @@ export default function Login() {
           toast.error(error.message);
         });
     }
+
+    const handleGoogle = () => {
+      googleLogin()
+        .then((result) => {
+          console.log("Google login successful",result.user.email);
+          const userInfo = {
+            email: result.user?.email,
+            name: result.user?.displayName
+        }
+        axiosPublic.post('/users', userInfo)
+        .then(res =>{
+            console.log(res.data);
+            navigate('/');
+        })
+        })
+        .catch((error) => {
+          toast.error(error.message);
+        });
+    };
   return (
     <div style={{
         backgroundImage: `url("${bgImg}")`,
@@ -75,6 +97,13 @@ export default function Login() {
         </div>
         <div className="form-control mt-6">
           <button disabled={disabled} className="btn bg-[#D1A054B3] text-white">Login</button>
+          <button
+            type="button"
+            onClick={handleGoogle}
+            className="btn btn-outline w-full py-2 flex items-center justify-center"
+          >
+            <FaGoogle className="mr-2" /> Sign in with Google
+          </button>
         </div>
         <p className='text-[#D1A054B3] text-center'>New here? <Link to='/register'><span className='font-bold'>Create a New Account </span></Link></p>
       </form>
