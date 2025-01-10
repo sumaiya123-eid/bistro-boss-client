@@ -11,7 +11,7 @@ import MenuCategory from "./MenuCategory";
 
 
 export default function MenuPage() {
-  const menu = UseMenu()
+  const [menu] = UseMenu()
   const offered=menu.filter(item=>item.category==="offered")
   const dessert=menu.filter(item=>item.category==="dessert")
   const pizza=menu.filter(item=>item.category==="pizza")
