@@ -57,7 +57,7 @@ export default function Dashboard() {
           ) : (
             <>
               <li>
-                <Link to="/dashboard/home">
+                <Link to="/dashboard/userHome">
                   <FaHome></FaHome>USER HOME
                 </Link>
               </li>

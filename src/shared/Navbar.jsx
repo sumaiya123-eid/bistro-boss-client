@@ -3,10 +3,12 @@ import { Link } from "react-router-dom";
 import { AuthContext } from "../provider/AuthProvider";
 import { FaCartShopping } from "react-icons/fa6";
 import useCart from "../hooks/useCart";
+import useAdmin from "../hooks/useAdmin";
 
 export default function Navbar() {
   const { user, userLogOut } = useContext(AuthContext);
   const [cart]=useCart();
+  const [isAdmin] = useAdmin();
   return (
     <div className="navbar bg-black fixed z-10 bg-opacity-30 *:text-white">
       <div className="navbar-start">
@@ -72,6 +74,12 @@ export default function Navbar() {
               </button>
             </Link>
           </li>
+          {
+            user && isAdmin && <li><Link to="/dashboard/adminHome">Dashboard</Link></li>
+        }
+        {
+            user && !isAdmin && <li><Link to="/dashboard/userHome">Dashboard</Link></li>
+        }
         </ul>
       </div>
       <div className="navbar-end">

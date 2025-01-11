@@ -6,7 +6,7 @@ const UseMenu=()=>{
     const axiosPublic=useAxiosPublic()
 //    const [menu,setMenu]=useState([])
 //      useEffect(()=>{
-//          fetch('http://localhost:5000/menu')
+//          fetch('https://bistro-boss-server-mu-pink.vercel.app/menu')
 //          .then(res=>res.json())
 //          .then(data=>{
 //              setMenu(data)

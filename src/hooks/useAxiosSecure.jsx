@@ -4,7 +4,7 @@ import { useContext } from "react";
 import { AuthContext } from "../provider/AuthProvider";
 
 const axiosSecure = axios.create({
-    baseURL: 'http://localhost:5000'
+    baseURL: 'https://bistro-boss-server-mu-pink.vercel.app'
 })
 const useAxiosSecure = () => {
     const navigate = useNavigate();
